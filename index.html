@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ürün Deneme</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Tam ekran kamera görünümü için stil */
+    #canvas.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1000;
+      background: black;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="card" data-product="jordan-mont">
+      <div class="card-head">
+        <img src="product-images/jordan-mont/jordan_mont.png" alt="Mont" class="product-img">
+        <div class="product-detail">
+          <h2>Jordan Retro Black Mont</h2>
+        </div>
+        <span class="back-text">Jordan</span>
+      </div>
+      <div class="card-body">
+        <span class="product-title">Nike Jordan Puffer <span class="badge">New</span></span>
+        <span class="product-price">USD <b>319,99</b></span>
+        <button class="try-on-btn">Try On</button>
+      </div>
+    </div>
+
+    <div class="card" data-product="black-dress">
+      <div class="card-head">
+        <img src="product-images/black-dress/black-dress.png" alt="Elbise" class="product-img">
+        <div class="product-detail">
+          <h2>Lace Tall Midnight Dress</h2> 
+        </div>
+        <span class="back-text">Midnight</span>
+      </div>
+      <div class="card-body">
+        <span class="product-title">Midnight Dress <span class="badge" style="background-color: rgb(219, 6, 6);">Hot</span></span>
+        <span class="product-price">USD <b>720,99</b></span>
+        <button class="try-on-btn">Try On</button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="canvas" style="display: none;"></canvas>
+  <button id="backButton" style="display: none;">Geri</button>
+
+  <script type="module" src="/src/main.ts"></script>
+  <script>
+    document.querySelectorAll(".try-on-btn").forEach(button => {
+      button.addEventListener("click", (event) => {
+        const card = event.target.closest(".card"); 
+        const productId = card?.getAttribute("data-product"); 
+
+        if (productId) {
+          // Kamera açılıyor
+          startCamera(productId);
+          // Ürün kartlarını gizle
+          const container = document.querySelector(".container");
+          if (container) {
+            container.style.display = "none";
+          }
+          // Canvas elementine fullscreen sınıfı ekle
+          const canvas = document.getElementById("canvas");
+          if (canvas) {
+            canvas.classList.add("fullscreen");
+            canvas.style.display = "block";
+          }
+        } else {
+          console.error("Hata: Ürün ID bulunamadı!");
+        }
+      });
+    });
+
+    async function startCamera(productId) {
+      document.getElementById("backButton").style.display = "block"; 
+
+      import("/src/main.ts").then(module => {
+        if (module.default) {
+          module.default(productId);
+        }
+      }).catch(err => console.error("Kamera başlatılırken hata oluştu:", err));
+    }
+
+    document.getElementById("backButton").addEventListener("click", () => {
+      window.location.reload(); // Sayfayı yenileyerek kamerayı sıfırla
+    });
+  </script>
+
+</body>
+</html>
